@@ -1,0 +1,7 @@
+=== Server Application ===
+1. Let our test port 7000
+2. Execute ./server.sh 7000
+
+=== Client Application ===
+1. Set /etc/hosts with "<IP address> www.alice.com"
+2. Execute ./client.sh www.alice.com 7000 index.html
