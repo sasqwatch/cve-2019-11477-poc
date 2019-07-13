@@ -1,0 +1,356 @@
+/** 
+ * @file logs.h
+ * @author Hyunwoo Lee
+ * @date 23 Sep 2018
+ * @brief This file is to define log messages
+ */
+
+#ifndef __LOG_H__
+#define __LOG_H__
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <assert.h>
+#include <errno.h>
+#include <stdint.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+static uint32_t count_idx;
+
+typedef struct log_record
+{
+  uint8_t name[64];
+  uint64_t time;
+} log_t;
+
+#ifdef DEBUG
+#define EDGE_MSG(msg) printf("[tls-ec] " msg "\n")
+#define EDGE_LOG(format, ...) printf("[tls-ec] " format "\n", ## __VA_ARGS__)
+#define EDGE_PRINT(msg, buf, start, end, interval) \
+  printf("[tls-ec] %s (%d bytes)\n", msg, end - start); \
+  for (count_idx = start; count_idx < end; count_idx++) \
+  { \
+    printf("%02X ", buf[count_idx]); \
+    if (count_idx % interval == (interval - 1)) \
+    { \
+      printf("\n"); \
+    } \
+  } \
+  printf("\n");
+#else
+#define EDGE_MSG(msg)
+#define EDGE_LOG(format, ...)
+#define EDGE_PRINT(msg, buf, start, end, interval)
+#endif /* DEBUG */
+
+#ifdef TIME_LOG
+#define NUM_OF_LOGS 300
+
+#define SERVER_TCP_START 0
+#define SERVER_TCP_END 1
+#define SERVER_BEFORE_TLS_ACCEPT 2
+#define SERVER_HANDSHAKE_START 3
+#define SERVER_CLIENT_HELLO_START 4
+#define SERVER_CLIENT_HELLO_END 5
+#define SERVER_PREPARE_STATE_START 6
+#define SERVER_PREPARE_STATE_END 7
+#define SERVER_SERVER_HELLO_START 8
+#define SERVER_SERVER_HELLO_END 9
+#define SERVER_SERVER_CERTIFICATE_START 10
+#define SERVER_SERVER_CERTIFICATE_END 11
+#define SERVER_SERVER_KEY_EXCHANGE_START 12
+#define SERVER_SERVER_KEY_EXCHANGE_END 13
+#define SERVER_SERVER_HELLO_DONE_START 14
+#define SERVER_SERVER_HELLO_DONE_END 15
+#define SERVER_CLIENT_CERTIFICATE_START 16
+#define SERVER_CLIENT_CERTIFICATE_END 17
+#define SERVER_CLIENT_KEY_EXCHANGE_START 18
+#define SERVER_CLIENT_KEY_EXCHANGE_END 19
+#define SERVER_CLIENT_VERIFY_CERTIFICATE_START 20
+#define SERVER_CLIENT_VERIFY_CERTIFICATE_END 21
+#define SERVER_CLIENT_CCS_START 22
+#define SERVER_CLIENT_CCS_END 23
+#define SERVER_CLIENT_FINISHED_START 24
+#define SERVER_CLIENT_FINISHED_END 25
+#define SERVER_SERVER_CCS_START 26
+#define SERVER_SERVER_CCS_END 27
+#define SERVER_SERVER_FINISHED_START 28
+#define SERVER_SERVER_FINISHED_END 29
+#define SERVER_HANDSHAKE_END 30
+#define SERVER_AFTER_TLS_ACCEPT 31
+#define SERVER_SERVE_HTML_START 32
+#define SERVER_RECV_HTTP_REQUEST_START 33
+#define SERVER_RECV_HTTP_REQUEST_END 34
+#define SERVER_PARSE_HTTP_REQUEST_START 35
+#define SERVER_PARSE_HTTP_REQUEST_END 36
+#define SERVER_CHECK_CACHE_START 37
+#define SERVER_CHECK_CACHE_END 38
+#define SERVER_SERVE_HTML_END 39
+
+#define CLIENT_TCP_START 50
+#define CLIENT_TCP_END 51
+#define CLIENT_BEFORE_TLS_CONNECT 52
+#define CLIENT_HANDSHAKE_START 53
+#define CLIENT_CLIENT_HELLO_START 54
+#define CLIENT_CLIENT_HELLO_END 55
+#define CLIENT_CLIENT_VERIFY_REQUEST_START 56
+#define CLIENT_CLIENT_VERIFY_REQUEST_END 57
+#define CLIENT_SERVER_HELLO_START 58
+#define CLIENT_SERVER_HELLO_END 59
+#define CLIENT_SERVER_CERTIFICATE_START 60
+#define CLIENT_SERVER_CERTIFICATE_END 61
+#define CLIENT_SERVER_KEY_EXCHANGE_START 62
+#define CLIENT_SERVER_KEY_EXCHANGE_END 63
+#define CLIENT_SERVER_CERTIFICATE_REQUEST_START 64
+#define CLIENT_SERVER_CERTIFICATE_REQUEST_END 65
+#define CLIENT_SERVER_HELLO_DONE_START 66
+#define CLIENT_SERVER_HELLO_DONE_END 67
+#define CLIENT_CLIENT_KEY_EXCHANGE_START 68
+#define CLIENT_CLIENT_KEY_EXCHANGE_END 69
+#define CLIENT_CLIENT_CERTIFICATE_VERIFY_START 70
+#define CLIENT_CLIENT_CERTIFICATE_VERIFY_END 71
+#define CLIENT_CLIENT_CCS_START 72
+#define CLIENT_CLIENT_CCS_END 73
+#define CLIENT_CLIENT_FINISHED_START 74
+#define CLIENT_CLIENT_FINISHED_END 75
+#define CLIENT_SERVER_CCS_START 76
+#define CLIENT_SERVER_CCS_END 77
+#define CLIENT_SERVER_FINISHED_START 78
+#define CLIENT_SERVER_FINISHED_END 79
+#define CLIENT_HANDSHAKE_END 80
+#define CLIENT_AFTER_TLS_CONNECT 81
+#define CLIENT_FETCH_HTML_START 82
+#define CLIENT_SEND_HTTP_REQUEST_START 83
+#define CLIENT_SEND_HTTP_REQUEST_END 84
+#define CLIENT_FETCH_HTML_END 85
+#define CLIENT_PARSE_DATA_START 86
+#define CLIENT_PARSE_DATA_END 87
+#define CLIENT_UPDATE_DATA_START 88
+#define CLIENT_UPDATE_DATA_END 89
+#define CLIENT_PROCESS_DATA_START 90
+#define CLIENT_PROCESS_DATA_END 91
+#define CLIENT_SEND_RESPONSE_START 92
+#define CLIENT_STORE_START 93
+#define CLIENT_STORE_END 94
+#define CLIENT_SEND_RESPONSE_END 95
+
+#define BROKER_PROCESS_LOAD_START 96
+#define BROKER_PROCESS_LOAD_END 97
+#define BROKER_PROCESS_STORE_START 98
+#define BROKER_PROCESS_STORE_END 99
+
+#define SERVER_ADD_EC_CERTIFICATE_START 101
+#define SERVER_ADD_EC_CERTIFICATE_END 102
+#define SERVER_ADD_ORIG_CERTIFICATE_START 103
+#define SERVER_ADD_ORIG_CERTIFICATE_END 104
+#define SERVER_ADD_SA_START 105
+#define SERVER_ADD_SA_END 106
+#define SERVER_ADD_CC_START 107
+#define SERVER_ADD_CC_END 108
+
+#define CLIENT_VERIFY_EC_CERTIFICATE_START 121
+#define CLIENT_VERIFY_EC_CERTIFICATE_END 122
+#define CLIENT_VERIFY_ORIG_CERTIFICATE_START 123
+#define CLIENT_VERIFY_ORIG_CERTIFICATE_END 124
+#define CLIENT_VERIFY_SA_START 125
+#define CLIENT_VERIFY_SA_END 126
+#define CLIENT_VERIFY_CC_START 127
+#define CLIENT_VERIFY_CC_END 128
+
+#define NW_0 150
+#define NW_1 151
+#define NW_2 152
+#define NW_3 153
+#define NW_4 154
+#define NW_5 155
+#define NW_6 156
+#define NW_7 157
+#define NW_8 158
+#define NW_9 159
+
+#define SW_0 160
+#define SW_1 161
+#define SW_2 162
+#define SW_3 163
+#define SW_4 164
+#define SW_5 165
+#define SW_6 166
+#define SW_7 167
+#define SW_8 168
+#define SW_9 169
+
+#define LOG_0 170
+#define LOG_1 171
+#define LOG_2 172
+#define LOG_3 173
+#define LOG_4 174
+#define LOG_5 175
+#define LOG_6 176
+#define LOG_7 177
+#define LOG_8 178
+#define LOG_9 179
+
+#define LOG_10 180
+#define LOG_11 181
+#define LOG_12 182
+#define LOG_13 183
+#define LOG_14 184
+#define LOG_15 185
+#define LOG_16 186
+#define LOG_17 187
+#define LOG_18 188
+#define LOG_19 189
+
+#define LOG_20 190
+#define LOG_21 191
+#define LOG_22 192
+#define LOG_23 193
+#define LOG_24 194
+#define LOG_25 195
+#define LOG_26 196
+#define LOG_27 197
+#define LOG_28 198
+#define LOG_29 199
+
+#define SERVER_TLS13_SELECT_PARAMETERS_START 200
+#define SERVER_TLS13_SELECT_PARAMETERS_END 201
+#define SERVER_TLS13_SELECT_SESSION_START 202
+#define SERVER_TLS13_SELECT_SESSION_END 203
+#define SERVER_TLS13_HELLO_RETRY_REQUEST_START 204
+#define SERVER_TLS13_HELLO_RETRY_REQUEST_END 205
+#define SERVER_TLS13_SECOND_CLIENT_HELLO_START 206
+#define SERVER_TLS13_SECOND_CLIENT_HELLO_END 207
+#define SERVER_TLS13_SERVER_HELLO_START 208
+#define SERVER_TLS13_SERVER_HELLO_END 209
+#define SERVER_TLS13_SERVER_CERTIFICATE_VERIFY_START 210
+#define SERVER_TLS13_SERVER_CERTIFICATE_VERIFY_END 211
+#define SERVER_TLS13_SERVER_FINISHED_START 212
+#define SERVER_TLS13_SERVER_FINISHED_END 213
+#define SERVER_TLS13_SECOND_CLIENT_FLIGHT_START 214
+#define SERVER_TLS13_SECOND_CLIENT_FLIGHT_END 215
+#define SERVER_TLS13_EARLY_DATA_START 216
+#define SERVER_TLS13_EARLY_DATA_END 217
+#define SERVER_TLS13_CLIENT_CERTIFICATE_START 218
+#define SERVER_TLS13_CLIENT_CERTIFICATE_END 219
+#define SERVER_TLS13_CLIENT_CERTIFICATE_VERIFY_START 220
+#define SERVER_TLS13_CLIENT_CERTIFICATE_VERIFY_END 221
+#define SERVER_TLS13_CHANNEL_ID_START 222
+#define SERVER_TLS13_CHANNEL_ID_END 223
+#define SERVER_TLS13_CLIENT_FINISHED_START 224
+#define SERVER_TLS13_CLIENT_FINISHED_END 225
+#define SERVER_TLS13_NEW_SESSION_TICKET_START 226
+#define SERVER_TLS13_NEW_SESSION_TICKET_END 227
+
+#define CLIENT_TLS13_HELLO_RETRY_REQUEST_START 250
+#define CLIENT_TLS13_HELLO_RETRY_REQUEST_END 251
+#define CLIENT_TLS13_SECOND_CLIENT_HELLO_START 252
+#define CLIENT_TLS13_SECOND_CLIENT_HELLO_END 253
+#define CLIENT_TLS13_SERVER_HELLO_START 254
+#define CLIENT_TLS13_SERVER_HELLO_END 255
+#define CLIENT_TLS13_ENCRYPTED_EXTENSIONS_START 256
+#define CLIENT_TLS13_ENCRYPTED_EXTENSIONS_END 257
+#define CLIENT_TLS13_CERTIFICATE_REQUEST_START 258
+#define CLIENT_TLS13_CERTIFICATE_REQUEST_END 259
+#define CLIENT_TLS13_SERVER_CERTIFICATE_START 260
+#define CLIENT_TLS13_SERVER_CERTIFICATE_END 261
+#define CLIENT_TLS13_SERVER_CERTIFICATE_VERIFY_START 262
+#define CLIENT_TLS13_SERVER_CERTIFICATE_VERIFY_END 263
+#define CLIENT_TLS13_SERVER_CERTIFICATE_REVERIFY_START 264
+#define CLIENT_TLS13_SERVER_CERTIFICATE_REVERIFY_END 265
+#define CLIENT_TLS13_SERVER_FINISHED_START 266
+#define CLIENT_TLS13_SERVER_FINISHED_END 267
+#define CLIENT_TLS13_SECOND_CLIENT_FLIGHT_START 268
+#define CLIENT_TLS13_SECOND_CLIENT_FLIGHT_END 269
+#define CLIENT_TLS13_EARLY_DATA_START 270
+#define CLIENT_TLS13_EARLY_DATA_END 271
+#define CLIENT_TLS13_CLIENT_CERTIFICATE_START 272
+#define CLIENT_TLS13_CLIENT_CERTIFICATE_END 273
+#define CLIENT_TLS13_CLIENT_CERTIFICATE_VERIFY_START 274
+#define CLIENT_TLS13_CLIENT_CERTIFICATE_VERIFY_END 275
+#define CLIENT_TLS13_COMPLETE_SECOND_FLIGHT_START 276
+#define CLIENT_TLS13_COMPLETE_SECOND_FLIGHT_END 277
+
+#define CLIENT_TLS13_VERIFY_EC_CERTIFICATE_START 280
+#define CLIENT_TLS13_VERIFY_EC_CERTIFICATE_END 281
+#define CLIENT_TLS13_VERIFY_ORIG_CERTIFICATE_START 282
+#define CLIENT_TLS13_VERIFY_ORIG_CERTIFICATE_END 283
+#define CLIENT_TLS13_VERIFY_SA_START 284
+#define CLIENT_TLS13_VERIFY_SA_END 285
+#define CLIENT_TLS13_VERIFY_CC_START 286
+#define CLIENT_TLS13_VERIFY_CC_END 287
+
+static log_t *barr;
+static inline long unsigned int get_current_millis()
+{
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+static int lidx;
+static FILE *log_file;
+
+#define INITIALIZE_LOG(arr) \
+  for ((lidx)=0; (lidx) < (NUM_OF_LOGS); (lidx)++) \
+    arr[lidx].time = 0; \
+
+#ifndef NO_PRINT
+#define PRINT_LOG(arr) ({ \
+    for ((lidx)=0; (lidx) < (NUM_OF_LOGS); (lidx)++) \
+      if (arr[lidx].time > 0) \
+        printf("%d: %lu\n", lidx, arr[lidx].time); \
+    })
+#else
+#define PRINT_LOG(arr)
+#endif /* NO_PRINT */
+
+#ifndef NO_PRINT
+#define RECORD_LOG(arr, n) \
+  barr = (log_t *)arr; \
+  if (barr) { \
+    memcpy((barr)[n].name, #n, sizeof(#n)); \
+    (barr)[n].time = get_current_millis(); \
+  } 
+#else
+#define RECORD_LOG(arr, n) \
+  barr = (log_t *)arr; \
+  if (barr) { \
+    (barr)[n].time = get_current_millis(); \
+  } 
+#endif /* NO_PRINT */
+
+#ifndef NO_PRINT
+#define INTERVAL(arr, a, b) \
+  barr = (log_t *)arr; \
+  if (barr) { \
+    printf("Time from %s to %s: %lu ms\n", #a, #b, ((barr)[b].time - (barr)[a].time)); \
+  }
+#else
+#define INTERVAL(arr, a, b)
+#endif /* NO_PRINT */
+
+#define FINALIZE(arr, fname) \
+  log_file = fopen(fname, "w"); \
+  for (lidx = 0; lidx < NUM_OF_LOGS; lidx++) \
+  { \
+    if (arr[lidx].time > 0) \
+      fprintf(log_file, "%lu, %d\n", arr[lidx].time, lidx); \
+  } \
+  fclose(log_file);
+#else
+#define INITIALIZE_LOG(arr)
+#define PRINT_LOG(arr)
+#define RECORD_LOG(arr, n)
+#define INTERVAL(arr, a, b)
+#define FINALIZE(arr, fname)
+#endif /* TIME_LOG */
+
+#if defined(__cplusplus)
+}
+#endif
+#endif /* __LOG_H__ */

@@ -1,0 +1,132 @@
+/** 
+ * @file logs.h
+ * @author Hyunwoo Lee
+ * @date 23 Sep 2018
+ * @brief This file is to define log messages
+ */
+
+#ifndef __LOG_H__
+#define __LOG_H__
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <assert.h>
+#include <errno.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+typedef struct log_record
+{
+  const char *name;
+  unsigned long time;
+} log_t;
+
+#define NUM_OF_LOGS 200
+
+#define SERVER_HANDSHAKE_START 0
+#define SERVER_CLIENT_HELLO_START 1
+#define SERVER_CLIENT_HELLO_END 2
+#define SERVER_SERVER_HELLO_START 3
+#define SERVER_SERVER_HELLO_END 4
+#define SERVER_SERVER_CERTIFICATE_START 5
+#define SERVER_SERVER_CERTIFICATE_END 6
+#define SERVER_SERVER_KEY_EXCHANGE_START 7
+#define SERVER_SERVER_KEY_EXCHANGE_END 8
+#define SERVER_SERVER_HELLO_DONE_START 9
+#define SERVER_SERVER_HELLO_DONE_END 10
+#define SERVER_CLIENT_KEY_EXCHANGE_START 11
+#define SERVER_CLIENT_KEY_EXCHANGE_END 12
+#define SERVER_CLIENT_CCS_START 13
+#define SERVER_CLIENT_CCS_END 14
+#define SERVER_CLIENT_FINISHED_START 15
+#define SERVER_CLIENT_FINISHED_END 16
+#define SERVER_SERVER_CCS_START 17
+#define SERVER_SERVER_CCS_END 18
+#define SERVER_SERVER_FINISHED_START 19
+#define SERVER_SERVER_FINISHED_END 20
+#define SERVER_HANDSHAKE_END 21
+
+#define CLIENT_HANDSHAKE_START 30
+#define CLIENT_CLIENT_HELLO_START 31
+#define CLIENT_CLIENT_HELLO_END 32
+#define CLIENT_SERVER_HELLO_START 33
+#define CLIENT_SERVER_HELLO_END 34
+#define CLIENT_SERVER_CERTIFICATE_START 35
+#define CLIENT_SERVER_CERTIFICATE_END 36
+#define CLIENT_SERVER_KEY_EXCHANGE_START 37
+#define CLIENT_SERVER_KEY_EXCHANGE_END 38
+#define CLIENT_SERVER_HELLO_DONE_START 39
+#define CLIENT_SERVER_HELLO_DONE_END 40
+#define CLIENT_CLIENT_KEY_EXCHANGE_START 41
+#define CLIENT_CLIENT_KEY_EXCHANGE_END 42
+#define CLIENT_CLIENT_CCS_START 43
+#define CLIENT_CLIENT_CCS_END 44
+#define CLIENT_CLIENT_FINISHED_START 45
+#define CLIENT_CLIENT_FINISHED_END 46
+#define CLIENT_SERVER_CCS_START 47
+#define CLIENT_SERVER_CCS_END 48
+#define CLIENT_SERVER_FINISHED_START 49
+#define CLIENT_SERVER_FINISHED_END 50
+#define CLIENT_HANDSHAKE_END 51
+
+#define SERVER_TCP_START 60
+#define SERVER_TCP_END 61
+#define SERVER_SERVE_HTML_START 62
+#define SERVER_SERVE_HTML_END 63
+
+#define CLIENT_TCP_START 70
+#define CLIENT_TCP_END 71
+#define CLIENT_FETCH_HTML_START 72
+#define CLIENT_FETCH_HTML_END 73
+
+/*
+static int lidx;
+static FILE *log_file;
+#define INITIALIZE_LOG(arr) \
+  if (arr) { \
+    for (lidx=0; lidx<NUM_OF_LOGS; lidx++) \
+      arr[lidx].time = 0; \
+  }
+*/
+
+#define RECORD_LOG(arr, n) \
+  if (arr) { \
+    arr[n].name = #n; \
+    arr[n].time = get_current_microseconds(); \
+  } 
+
+/*
+#define PRINT_LOG(arr) \
+  if (arr) { \
+    for ((lidx)=0; (lidx) < (NUM_OF_LOGS); (lidx)++) \
+      printf("%s: %lu\n", arr[lidx].name, arr[lidx].time); \
+  }
+*/
+
+#define INTERVAL(arr, a, b) \
+  if (arr) { \
+    printf("Time from %s to %s: %lu us\n", arr[a].name, arr[b].name, arr[b].time - arr[a].time); \
+  }
+
+/*
+#define FINALIZE(arr, fname) \
+  if (arr) { \
+    log_file = fopen(fname, "a"); \
+    for (lidx = 0; lidx < NUM_OF_LOGS; lidx++) \
+    { \
+      if (arr[lidx].time > 0) \
+        fprintf(log_file, "%lu, %d, %s\n", arr[lidx].time, lidx, arr[lidx].name); \
+    } \
+    fclose(log_file); \
+  }
+*/  
+extern log_t time_log[NUM_OF_LOGS];
+
+#if defined(__cplusplus)
+}
+#endif
+#endif /* __LOG_H__ */
