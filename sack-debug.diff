@@ -1,0 +1,58 @@
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 44a3aa7..e022f9e2 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -1256,6 +1256,8 @@ static bool tcp_shifted_skb(struct sock *sk, struct sk_buff *skb,
+ 	u32 start_seq = TCP_SKB_CB(skb)->seq;	/* start of newly-SACKed */
+ 	u32 end_seq = start_seq + shifted;	/* end of newly-SACKed */
+ 
++	printk(KERN_WARNING "[SACK] shifted enter");
++
+ 	BUG_ON(!pcount);
+ 
+ 	/* Adjust counters and hints for the newly sacked sequence
+@@ -1274,6 +1276,9 @@ static bool tcp_shifted_skb(struct sock *sk, struct sk_buff *skb,
+ 	TCP_SKB_CB(prev)->end_seq += shifted;
+ 	TCP_SKB_CB(skb)->seq += shifted;
+ 
++	printk(KERN_WARNING "[SACK] shifted: mss %d pcount %u skb_pcount %u",
++		mss, pcount, tcp_skb_pcount(skb));
++
+ 	tcp_skb_pcount_add(prev, pcount);
+ 	BUG_ON(tcp_skb_pcount(skb) < pcount);
+ 	tcp_skb_pcount_add(skb, -pcount);
+@@ -1352,6 +1357,8 @@ static struct sk_buff *tcp_shift_skb_data(struct sock *sk, struct sk_buff *skb,
+ 	int len;
+ 	int in_sack;
+ 
++	printk(KERN_WARNING "[SACK] shift enter");
++
+ 	if (!sk_can_gso(sk))
+ 		goto fallback;
+ 
+@@ -1450,6 +1457,9 @@ static struct sk_buff *tcp_shift_skb_data(struct sock *sk, struct sk_buff *skb,
+ 	/* Hole filled allows collapsing with the next as well, this is very
+ 	 * useful when hole on every nth skb pattern happens
+ 	 */
++
++	printk(KERN_WARNING "[SACK] shift hole-filling");
++
+ 	if (prev == tcp_write_queue_tail(sk))
+ 		goto out;
+ 	skb = tcp_write_queue_next(sk, prev);
+@@ -1468,12 +1478,15 @@ static struct sk_buff *tcp_shift_skb_data(struct sock *sk, struct sk_buff *skb,
+ 
+ out:
+ 	state->fack_count += pcount;
++	printk(KERN_WARNING "[SACK] shift out");
+ 	return prev;
+ 
+ noop:
++	printk(KERN_WARNING "[SACK] shift noop");
+ 	return skb;
+ 
+ fallback:
++	printk(KERN_WARNING "[SACK] shift fallback");
+ 	NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_SACKSHIFTFALLBACK);
+ 	return NULL;
+ }
